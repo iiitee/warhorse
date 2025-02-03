@@ -1,16 +1,16 @@
 ---
 {% if warhorse.terraform.state_bucket_enabled is defined and warhorse.terraform.state_bucket_enabled is true %}
-- name: "{{ name }} Terraform Remote State"
+- name: "{% raw %}{{ name }}{% endraw %} Terraform Remote State"
   community.general.terraform:
-    project_path: "{{ terraform_path }}"
-    state: "{{ state }}"
+    project_path: "{% raw %}{{ terraform_path }}{% endraw %}"
+    state: "{% raw %}{{ state }}{% endraw %}"
     backend_config:
-      region: "{{ warhorse.terraform.state_bucket_region }}"
-      bucket: "{{ warhorse.terraform.state_bucket_name }}"
-      key: "{{ terraform_state_bucket_key }}"
-      access_key: "{{ bucket_access_key }}"
-      secret_key: "{{ bucket_secret_key }}"
-      endpoints.s3: "{{ warhorse.terraform.state_bucket_endpoint }}"
+      region: "{% raw %}{{ warhorse.terraform.state_bucket_region }}{% endraw %}"
+      bucket: "{% raw %}{{ warhorse.terraform.state_bucket_name }}{% endraw %}"
+      key: "{% raw %}{{ terraform_state_bucket_key }}{% endraw %}"
+      access_key: "{% raw %}{{ bucket_access_key }}{% endraw %}"
+      secret_key: "{% raw %}{{ bucket_secret_key }}{% endraw %}"
+      endpoints.s3: "{% raw %}{{ warhorse.terraform.state_bucket_endpoint }}{% endraw %}"
     force_init: true
     variables:
 {% if warhorse.terraform.digitalocean_token is defined %}
