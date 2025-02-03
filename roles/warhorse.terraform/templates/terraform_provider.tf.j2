@@ -83,7 +83,7 @@ terraform {
     skip_credentials_validation = true
     skip_metadata_api_check     = true
     endpoints = {
-      s3 = "{{ warhorse.terraform.state_bucket_endpoint }}"
+      s3 = "https://nyc3.digitaloceanspaces.com"
     }
   }
 }
