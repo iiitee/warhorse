@@ -79,7 +79,7 @@ provider "azurerm" {
 {% endif %}
 {% if warhorse.terraform.state_bucket_enabled is true %}
 terraform {
-  backend "s3" {
+  backend "endpoints.s3" {
     skip_credentials_validation = true
     skip_metadata_api_check     = true
     endpoints {
