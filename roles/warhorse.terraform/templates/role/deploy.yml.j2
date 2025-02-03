@@ -10,7 +10,6 @@
       key: "{{ terraform_state_bucket_key }}"
       access_key: "{% raw %}{{ bucket_access_key }}{% endraw %}"
       secret_key: "{% raw %}{{ bucket_secret_key }}{% endraw %}"
-      endpoints: "{{ warhorse.terraform.state_bucket_endpoint }}"
     force_init: true
     variables:
 {% if warhorse.terraform.digitalocean_token is defined %}
