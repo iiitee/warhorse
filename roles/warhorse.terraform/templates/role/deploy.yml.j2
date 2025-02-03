@@ -2,15 +2,15 @@
 {% if warhorse.terraform.state_bucket_enabled is defined and warhorse.terraform.state_bucket_enabled is true %}
 - name: "{% raw %}{{ name }}{% endraw %} Terraform Remote State"
   community.general.terraform:
-    project_path: "{% raw %}{{ terraform_path }}{% endraw %}"
+    project_path: '{{ terraform_path }}'
     state: "{% raw %}{{ state }}{% endraw %}"
     backend_config:
-      region: "{% raw %}{{ warhorse.terraform.state_bucket_region }}{% endraw %}"
-      bucket: "{% raw %}{{ warhorse.terraform.state_bucket_name }}{% endraw %}"
-      key: "{% raw %}{{ terraform_state_bucket_key }}{% endraw %}"
+      region: "{{ warhorse.terraform.state_bucket_region }}"
+      bucket: "{{ warhorse.terraform.state_bucket_name }}"
+      key: "{{ terraform_state_bucket_key }}"
       access_key: "{% raw %}{{ bucket_access_key }}{% endraw %}"
       secret_key: "{% raw %}{{ bucket_secret_key }}{% endraw %}"
-      endpoints.s3: "{% raw %}{{ warhorse.terraform.state_bucket_endpoint }}{% endraw %}"
+      endpoint.s3: "{{ warhorse.terraform.state_bucket_endpoint }}"
     force_init: true
     variables:
 {% if warhorse.terraform.digitalocean_token is defined %}
@@ -18,9 +18,6 @@
 {% endif %}
 {% if warhorse.terraform.linode_token is defined %}
       linode_token: "{% raw %}{{ linode_token }}{% endraw %}"
-{% endif %}
-{% if warhorse.terraform.cloudflare_token is defined %}
-      cloudflare_token: "{% raw %}{{ cloudflare_token }}{% endraw %}"
 {% endif %}
 {% endif %}
 
@@ -37,9 +34,6 @@
 {% if warhorse.terraform.linode_token is defined %}
       linode_token: "{% raw %}{{ linode_token }}{% endraw %}"
 {% endif %}
-{% if warhorse.terraform.cloudflare_token is defined %}
-      cloudflare_token: "{% raw %}{{ cloudflare_token }}{% endraw %}"
-{% endif %}
 {% endif %}
 
 {% if warhorse.terraform.cloud_enabled is defined and warhorse.terraform.cloud_enabled is true %}
@@ -55,8 +49,5 @@
 {% endif %}
 {% if warhorse.terraform.linode_token is defined %}
       linode_token: "{% raw %}{{ linode_token }}{% endraw %}"
-{% endif %}
-{% if warhorse.terraform.cloudflare_token is defined %}
-      cloudflare_token: "{% raw %}{{ cloudflare_token }}{% endraw %}"
 {% endif %}
 {% endif %}
