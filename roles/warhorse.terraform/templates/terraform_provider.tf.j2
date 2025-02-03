@@ -79,11 +79,12 @@ provider "azurerm" {
 {% endif %}
 {% if warhorse.terraform.state_bucket_enabled is true %}
 terraform {
-  backend "endpoints.s3" {
+  backend "s3" {
     skip_credentials_validation = true
     skip_metadata_api_check     = true
-    endpoints {
-      s3 = "https://nyc3.digitaloceanspaces.com/"
+    endpoints = {
+      s3 = "https://nyc3.digitaloceanspaces.com"
+    }
   }
 }
 {% endif %}
