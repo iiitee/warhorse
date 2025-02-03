@@ -25,7 +25,7 @@
 {% endif %}
 
 {% if warhorse.terraform.state_bucket_enabled is not defined and warhorse.terraform.cloud_enabled is not defined %}
-- name: "{% raw %}{{ name }}{% endraw %} Terraform Local State"
+- name: "Terraform Local State"
   community.general.terraform:
     project_path: '{{ terraform_path }}'
     state: "{% raw %}{{ state }}{% endraw %}"
