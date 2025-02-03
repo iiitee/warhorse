@@ -41,6 +41,10 @@ terraform {
 {% if warhorse|regex_search("'provider': 'digitalocean'", multiline=True, ignorecase=True) %}
 provider "digitalocean" {
   token = var.do_token
+  
+   spaces {
+    endpoint = "https://nyc3.digitaloceanspaces.com"
+  }
 }
 {% endif %}
 {% if warhorse|regex_search("'provider': 'linode'", multiline=True, ignorecase=True) %}
