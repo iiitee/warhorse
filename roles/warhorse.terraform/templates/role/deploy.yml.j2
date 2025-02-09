@@ -11,9 +11,9 @@
       access_key: "{% raw %}{{ bucket_access_key }}{% endraw %}"
       secret_key: "{% raw %}{{ bucket_secret_key }}{% endraw %}"
       endpoint: "{{ warhorse.terraform.state_bucket_endpoint }}"
-      skip_credentials_validation = true
-      skip_metadata_api_check = true
-      force_path_style = true
+      skip_credentials_validation: true
+      skip_metadata_api_check: true
+      force_path_style: true
     force_init: true
     variables:
 {% if warhorse.terraform.digitalocean_token is defined %}
