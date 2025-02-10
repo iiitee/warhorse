@@ -1,6 +1,6 @@
 ---
 op_folder_location: './OP'
-terraform_path: 'terraform'
+terraform_path: './terraform'
 terraform_project_path: '{{ op_folder_location }}/{{ warhorse.general.op_number }}/terraform'
 terraform_role_path: '{{ op_folder_location }}/{{ warhorse.general.op_number }}/roles/terraform'
 vm_default_do_img: 'ubuntu-20-04-x64'
