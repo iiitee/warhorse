@@ -5,7 +5,7 @@
     project_path: "{% raw %}{{ terraform_path }}{% endraw %}"
     state: "{% raw %}{{ state }}{% endraw %}"
     backend_config:
-      region: "{{ warhorse.terraform.region }}"
+      region: "{{ warhorse.terraform.state_bucket_region }}"
       bucket: "{{ warhorse.terraform.state_bucket_name }}"
       key: "{{ terraform_state_bucket_key }}"
       access_key: "{% raw %}{{ bucket_access_key }}{% endraw %}"
