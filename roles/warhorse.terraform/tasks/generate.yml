@@ -1,42 +1,68 @@
 ---
-- name: Create a terraform directorys 
+- name: Create Terraform directories
   ansible.builtin.file:
     path: '{{ item.folder }}'
     state: directory
     mode: '0755'
   with_items:
-  - folder: "{{ terraform_project_path }}"
+    - folder: "{{ terraform_project_path }}"
 
 - name: Generating Terraform Variables
   template:
     src: templates/terraform_variables.tf.j2
     dest: "{{ terraform_project_path }}/variables.tf"
+  vars:
+    # Ensure warhorse is defined even if not passed in externally
+    warhorse: "{{ warhorse | default({}) }}"
 
 - name: Generating Terraform Providers
   template:
     src: templates/terraform_provider.tf.j2
     dest: "{{ terraform_project_path }}/provider.tf"
+  vars:
+    warhorse: "{{ warhorse | default({}) }}"
 
+# Include Azure tasks if any provider field in the configuration has "azure"
 - ansible.builtin.include_tasks: azure.yml
-  when: warhorse | regex_search("(?i).+('provider':\s'azure')", multiline=True, ignorecase=True)
+  when: (warhorse | to_nice_json) | regex_search('(?i).*"provider"\\s*:\\s*"azure".*')
+  vars:
+    warhorse: "{{ warhorse | default({}) }}"
+
+# Include DigitalOcean tasks if any provider field in the configuration has "digitalocean"
 - ansible.builtin.include_tasks: digitalocean.yml
-  when: warhorse | regex_search("(?i).+('provider':\s'digitalocean')", multiline=True, ignorecase=True)
+  when: (warhorse | to_nice_json) | regex_search('(?i).*"provider"\\s*:\\s*"digitalocean".*')
+  vars:
+    warhorse: "{{ warhorse | default({}) }}"
+
+# Include Linode tasks if any provider field in the configuration has "linode"
 - ansible.builtin.include_tasks: linode.yml
-  when: warhorse | regex_search("(?i).+('provider':\s'linode')", multiline=True, ignorecase=True)
+  when: (warhorse | to_nice_json) | regex_search('(?i).*"provider"\\s*:\\s*"linode".*')
+  vars:
+    warhorse: "{{ warhorse | default({}) }}"
+
+# Include AWS tasks if any provider field in the configuration has "aws"
 - ansible.builtin.include_tasks: aws.yml
-  when: warhorse | regex_search("(?i).+('provider':\s'aws')", multiline=True, ignorecase=True)
+  when: (warhorse | to_nice_json) | regex_search('(?i).*"provider"\\s*:\\s*"aws".*')
+  vars:
+    warhorse: "{{ warhorse | default({}) }}"
 
 - name: Generating Terraform Outputs
   template:
     src: templates/terraform_outputs.tf.j2
     dest: "{{ terraform_project_path }}/outputs.tf"
+  vars:
+    warhorse: "{{ warhorse | default({}) }}"
 
 - name: Generating Terraform Inventory Template
   template:
     src: templates/inventory.tmpl.j2
     dest: "{{ terraform_project_path }}/inventory.tmpl"
+  vars:
+    warhorse: "{{ warhorse | default({}) }}"
 
 - name: Generating Terraform aws Template
   template:
     src: templates/aws.tmpl.j2
     dest: "{{ terraform_project_path }}/aws.tmpl"
+  vars:
+    warhorse: "{{ warhorse | default({}) }}"
