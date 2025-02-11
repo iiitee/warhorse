@@ -1,26 +1,26 @@
 terraform {
   required_version = ">= 1.0.0"
   required_providers {
-    {% if warhorse.providers.digitalocean %}
+    {% if (warhorse.providers | default({})).digitalocean %}
     digitalocean = {
       source = "digitalocean/digitalocean"
     }
     {% endif %}
 
-    {% if warhorse.providers.cloudflare %}
+    {% if (warhorse.providers | default({})).cloudflare %}
     cloudflare = {
       source  = "cloudflare/cloudflare"
       version = "~> 3.0"
     }
     {% endif %}
 
-    {% if warhorse.providers.linode %}
+    {% if (warhorse.providers | default({})).linode %}
     linode = {
       source = "linode/linode"
     }
     {% endif %}
 
-    {% if warhorse.providers.aws %}
+    {% if (warhorse.providers | default({})).aws %}
     aws = {
       source = "hashicorp/aws"
     }
@@ -38,7 +38,7 @@ terraform {
   }
 
   {# Backend configuration for state management using an S3 backend (compatible with DigitalOcean Spaces) #}
-  {% if warhorse.terraform.state_bucket_enabled %}
+  {% if (warhorse.terraform | default({})).state_bucket_enabled %}
   backend "s3" {
     bucket = "{{ warhorse.terraform.state_bucket }}"
     key    = "{{ warhorse.terraform.state_key }}"
@@ -52,7 +52,7 @@ terraform {
   }
   {% endif %}
 
-  {% if warhorse.terraform.cloud_enabled %}
+  {% if (warhorse.terraform | default({})).cloud_enabled %}
   cloud {
     organization = "{{ warhorse.terraform.cloud_organization }}"
     workspaces {
@@ -63,7 +63,7 @@ terraform {
 }
 
 {# Provider blocks for individual services #}
-{% if warhorse.providers.digitalocean %}
+{% if (warhorse.providers | default({})).digitalocean %}
 provider "digitalocean" {
   token = var.do_token
   
@@ -75,19 +75,19 @@ provider "digitalocean" {
 }
 {% endif %}
 
-{% if warhorse.providers.linode %}
+{% if (warhorse.providers | default({})).linode %}
 provider "linode" {
   token = var.linode_token
 }
 {% endif %}
 
-{% if warhorse.providers.cloudflare %}
+{% if (warhorse.providers | default({})).cloudflare %}
 provider "cloudflare" {
   api_token = var.cloudflare_token
 }
 {% endif %}
 
-{% if warhorse.providers.aws %}
+{% if (warhorse.providers | default({})).aws %}
 provider "aws" {
   {# Insert AWS credentials if defined; ensure they are treated as strings #}
   {% if aws_access_key is defined and aws_secret_key is defined %}
@@ -97,13 +97,13 @@ provider "aws" {
   
   region = "us-east-1"
   
-  {% if warhorse.terraform.aws_profile is defined %}
+  {% if (warhorse.terraform | default({})).aws_profile is defined %}
   profile = "{{ warhorse.terraform.aws_profile }}"
   {% endif %}
 }
 {% endif %}
 
-{% if warhorse.providers.azure %}
+{% if (warhorse.providers | default({})).azure %}
 provider "azurerm" {
   features {
     resource_group {
@@ -111,7 +111,7 @@ provider "azurerm" {
     }
   }
   
-  {% if warhorse.terraform.azure_subid is defined %}
+  {% if (warhorse.terraform | default({})).azure_subid is defined %}
   subscription_id = "{{ warhorse.terraform.azure_subid }}"
   {% endif %}
 }
