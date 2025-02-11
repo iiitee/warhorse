@@ -1,4 +1,7 @@
-{% if warhorse | regex_search("(?i).+('provider':\s'digitalocean')", multiline=True, ignorecase=True) %}
+{# Determine if DigitalOcean is enabled by checking DNS and VM provider values #}
+{% set do_enabled = ( (warhorse.dns.provider | default('') | lower == "digitalocean") 
+                       or (warhorse.vm is defined and (warhorse.vm | selectattr('provider', 'equalto', 'digitalocean') | list | length > 0) ) ) %}
+{% if do_enabled %}
 variable "do_token" {
   description = "Digital Ocean API Key"
   type        = string
@@ -6,7 +9,10 @@ variable "do_token" {
 }
 {% endif %}
 
-{% if warhorse | regex_search("(?i).+('provider':\s'linode')", multiline=True, ignorecase=True) %}
+{# Determine if Linode is enabled #}
+{% set linode_enabled = ( (warhorse.dns.provider | default('') | lower == "linode") 
+                           or (warhorse.vm is defined and (warhorse.vm | selectattr('provider', 'equalto', 'linode') | list | length > 0) ) ) %}
+{% if linode_enabled %}
 variable "linode_token" {
   description = "Linode API Key"
   type        = string
@@ -14,7 +20,10 @@ variable "linode_token" {
 }
 {% endif %}
 
-{% if warhorse | regex_search("(?i).+('provider':\s'cloudflare')", multiline=True, ignorecase=True) %}
+{# Determine if Cloudflare is enabled #}
+{% set cloudflare_enabled = ( (warhorse.dns.provider | default('') | lower == "cloudflare") 
+                               or (warhorse.vm is defined and (warhorse.vm | selectattr('provider', 'equalto', 'cloudflare') | list | length > 0) ) ) %}
+{% if cloudflare_enabled %}
 variable "cloudflare_token" {
   description = "Cloudflare API Key"
   type        = string
