@@ -35,12 +35,11 @@ terraform {
   {# Backend configuration for state management using an S3 backend (compatible with DigitalOcean Spaces) #}
   {% if (warhorse.terraform | default({})).get('state_bucket_enabled') %}
   backend "s3" {
-    bucket = "{{ warhorse.terraform.state_bucket_name }}"
-    key    = "{{ warhorse.terraform.state_bucket_key }}"
-    region = "{{ warhorse.terraform.state_bucket_region }}"
-    # Use DO Spaces credentials for S3 backend
-    access_key = "{{ warhorse.terraform.bucket_access_key }}"
-    secret_key = "{{ warhorse.terraform.bucket_secret_key }}"
+    bucket                = "{{ warhorse.terraform.state_bucket_name }}"
+    key                   = "{{ warhorse.terraform.state_bucket_key }}"
+    region               = "us-east-1"  # Required for DO Spaces S3 API compatibility
+    access_key           = "{{ warhorse.terraform.bucket_access_key }}"
+    secret_key           = "{{ warhorse.terraform.bucket_secret_key }}"
     endpoints = {
       s3 = "{{ warhorse.terraform.state_bucket_endpoint }}"
     }
@@ -64,7 +63,7 @@ terraform {
 {# Provider blocks for individual services #}
 {% if (warhorse.providers | default({})).get('digitalocean') %}
 provider "digitalocean" {
-  token = var.do_token
+  token = var.digitalocean_token
   
   # Spaces credentials need to be configured separately from the main token
   spaces_access_key_id  = "{{ warhorse.terraform.bucket_access_key }}"
