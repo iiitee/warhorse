@@ -48,8 +48,7 @@ terraform {
     skip_credentials_validation = true
     skip_metadata_api_check     = true
     use_path_style = true
-    {# Use the new endpoints block to specify the S3 endpoint instead of the deprecated 'endpoint' parameter #}
-    endpoints {
+    endpoints = {
       s3 = "{{ (warhorse.terraform | default({})).get('state_endpoint', '') }}"
     }
   }
