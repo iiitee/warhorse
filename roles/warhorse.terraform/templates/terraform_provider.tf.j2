@@ -1,91 +1,118 @@
 terraform {
-  required_version = ">= 0.12.0"
+  required_version = ">= 1.0.0"
   required_providers {
-{% if warhorse|regex_search("'provider': 'digitalocean'", multiline=True, ignorecase=True) %}
+    {% if warhorse.providers.digitalocean %}
     digitalocean = {
       source = "digitalocean/digitalocean"
     }
-{% endif %}
-{% if warhorse|regex_search("'provider': 'cloudflare'", multiline=True, ignorecase=True) %}
+    {% endif %}
+
+    {% if warhorse.providers.cloudflare %}
     cloudflare = {
       source  = "cloudflare/cloudflare"
       version = "~> 3.0"
     }
-{% endif %}
-{% if warhorse|regex_search("'provider': 'linode'", multiline=True, ignorecase=True) %}
+    {% endif %}
+
+    {% if warhorse.providers.linode %}
     linode = {
       source = "linode/linode"
     }
-{% endif %}
-{% if warhorse|regex_search("'provider': 'aws'", multiline=True, ignorecase=True) %}
+    {% endif %}
+
+    {% if warhorse.providers.aws %}
     aws = {
-      source  = "hashicorp/aws"
+      source = "hashicorp/aws"
     }
-{% endif %}
+    {% endif %}
+
     javascript = {
-      source = "apparentlymart/javascript"
+      source  = "apparentlymart/javascript"
       version = "0.0.1"
     }
-    local = ">= 1.2"
+
+    local = {
+      source  = "hashicorp/local"
+      version = ">= 1.2"
+    }
   }
-{% if warhorse.terraform.cloud_enabled is true %}
+
+  {# Backend configuration for state management using an S3 backend (compatible with DigitalOcean Spaces) #}
+  {% if warhorse.terraform.state_bucket_enabled %}
+  backend "s3" {
+    bucket = "{{ warhorse.terraform.state_bucket }}"
+    key    = "{{ warhorse.terraform.state_key }}"
+    region = "{{ warhorse.terraform.state_region | default('nyc3') }}"
+    skip_credentials_validation = true
+    skip_metadata_api_check     = true
+    {# Use the new endpoints block to specify the S3 endpoint instead of the deprecated 'endpoint' parameter #}
+    endpoints {
+      s3 = "{{ warhorse.terraform.state_endpoint }}"
+    }
+  }
+  {% endif %}
+
+  {% if warhorse.terraform.cloud_enabled %}
   cloud {
     organization = "{{ warhorse.terraform.cloud_organization }}"
-
     workspaces {
       name = "{{ warhorse.terraform.cloud_workspace }}"
     }
   }
-{% endif %}
+  {% endif %}
 }
-{% if warhorse|regex_search("'provider': 'digitalocean'", multiline=True, ignorecase=True) %}
+
+{# Provider blocks for individual services #}
+{% if warhorse.providers.digitalocean %}
 provider "digitalocean" {
   token = var.do_token
   
-   spaces {
+  spaces {
+    {# Currently using the traditional endpoint parameter for provider configuration.
+       If DigitalOcean updates the Spaces configuration, adjust accordingly. #}
     endpoint = "https://nyc3.digitaloceanspaces.com"
   }
 }
 {% endif %}
-{% if warhorse|regex_search("'provider': 'linode'", multiline=True, ignorecase=True) %}
+
+{% if warhorse.providers.linode %}
 provider "linode" {
   token = var.linode_token
 }
 {% endif %}
-{% if warhorse|regex_search("'provider': 'cloudflare'", multiline=True, ignorecase=True) %}
+
+{% if warhorse.providers.cloudflare %}
 provider "cloudflare" {
   api_token = var.cloudflare_token
 }
 {% endif %}
-{% if warhorse|regex_search("'provider': 'aws'", multiline=True, ignorecase=True) %}
+
+{% if warhorse.providers.aws %}
 provider "aws" {
-{% if aws_access_key is defined and aws_secret_key is defined %}
-  access_key = {{ aws_access_key }}
-  secret_key = {{ aws_secret_key }}
-{% endif %}
+  {# Insert AWS credentials if defined; ensure they are treated as strings #}
+  {% if aws_access_key is defined and aws_secret_key is defined %}
+  access_key = "{{ aws_access_key }}"
+  secret_key = "{{ aws_secret_key }}"
+  {% endif %}
+  
   region = "us-east-1"
-{% if warhorse.terraform.aws_profile is defined %}
+  
+  {% if warhorse.terraform.aws_profile is defined %}
   profile = "{{ warhorse.terraform.aws_profile }}"
-{% endif %}
+  {% endif %}
 }
 {% endif %}
-{% if warhorse|regex_search("'provider': 'azure'", multiline=True, ignorecase=True) %}
+
+{% if warhorse.providers.azure %}
 provider "azurerm" {
   features {
     resource_group {
       prevent_deletion_if_contains_resources = false
     }
   }
-{% if warhorse.terraform.azure_subid is defined %}
+  
+  {% if warhorse.terraform.azure_subid is defined %}
   subscription_id = "{{ warhorse.terraform.azure_subid }}"
-{% endif %}
-}
-{% endif %}
-{% if warhorse.terraform.state_bucket_enabled is true %}
-terraform {
-  backend "s3" {
-    skip_credentials_validation = true
-    skip_metadata_api_check     = true
-  }
+  {% endif %}
 }
 {% endif %}
