@@ -40,23 +40,23 @@ terraform {
   {# Backend configuration for state management using an S3 backend (compatible with DigitalOcean Spaces) #}
   {% if (warhorse.terraform | default({})).get('state_bucket_enabled') %}
   backend "s3" {
-    bucket = "{{ warhorse.terraform.state_bucket }}"
-    key    = "{{ warhorse.terraform.state_key }}"
-    region = "{{ warhorse.terraform.state_region | default('nyc3') }}"
+    bucket = "{{ (warhorse.terraform | default({})).get('state_bucket', '') }}"
+    key    = "{{ (warhorse.terraform | default({})).get('state_key', '') }}"
+    region = "{{ (warhorse.terraform | default({})).get('state_region', 'nyc3') }}"
     skip_credentials_validation = true
     skip_metadata_api_check     = true
     {# Use the new endpoints block to specify the S3 endpoint instead of the deprecated 'endpoint' parameter #}
     endpoints {
-      s3 = "{{ warhorse.terraform.state_endpoint }}"
+      s3 = "{{ (warhorse.terraform | default({})).get('state_endpoint', '') }}"
     }
   }
   {% endif %}
 
   {% if (warhorse.terraform | default({})).get('cloud_enabled') %}
   cloud {
-    organization = "{{ warhorse.terraform.cloud_organization }}"
+    organization = "{{ (warhorse.terraform | default({})).get('cloud_organization', '') }}"
     workspaces {
-      name = "{{ warhorse.terraform.cloud_workspace }}"
+      name = "{{ (warhorse.terraform | default({})).get('cloud_workspace', '') }}"
     }
   }
   {% endif %}
@@ -68,8 +68,6 @@ provider "digitalocean" {
   token = var.do_token
   
   spaces {
-    {# Currently using the traditional endpoint parameter for provider configuration.
-       If DigitalOcean updates the Spaces configuration, adjust accordingly. #}
     endpoint = "https://nyc3.digitaloceanspaces.com"
   }
 }
@@ -89,7 +87,6 @@ provider "cloudflare" {
 
 {% if (warhorse.providers | default({})).get('aws') %}
 provider "aws" {
-  {# Insert AWS credentials if defined; ensure they are treated as strings #}
   {% if aws_access_key is defined and aws_secret_key is defined %}
   access_key = "{{ aws_access_key }}"
   secret_key = "{{ aws_secret_key }}"
@@ -98,7 +95,7 @@ provider "aws" {
   region = "us-east-1"
   
   {% if (warhorse.terraform | default({})).get('aws_profile') is defined %}
-  profile = "{{ warhorse.terraform.aws_profile }}"
+  profile = "{{ (warhorse.terraform | default({})).get('aws_profile') }}"
   {% endif %}
 }
 {% endif %}
@@ -112,7 +109,7 @@ provider "azurerm" {
   }
   
   {% if (warhorse.terraform | default({})).get('azure_subid') is defined %}
-  subscription_id = "{{ warhorse.terraform.azure_subid }}"
+  subscription_id = "{{ (warhorse.terraform | default({})).get('azure_subid') }}"
   {% endif %}
 }
 {% endif %}
