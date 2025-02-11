@@ -38,10 +38,12 @@ terraform {
     bucket = "{{ warhorse.terraform.state_bucket_name }}"
     key    = "{{ warhorse.terraform.state_bucket_key }}"
     region = "{{ warhorse.terraform.state_bucket_region }}"
-    # Use DO Spaces credentials for S3 backend
-    spaces_access_key_id = "{{ warhorse.terraform.bucket_access_key }}"
-    spaces_secret_access_key = "{{ warhorse.terraform.bucket_secret_key }}"
-    endpoint = "{{ warhorse.terraform.state_bucket_endpoint }}"
+    # Use updated S3 backend
+    access_key = "{{ warhorse.terraform.bucket_access_key }}"
+    secret_key = "{{ warhorse.terraform.bucket_secret_key }}"
+    endpoints = {
+      s3 = "{{ warhorse.terraform.state_bucket_endpoint }}"
+    }
     skip_credentials_validation = true
     skip_metadata_api_check = true
     force_path_style = true
