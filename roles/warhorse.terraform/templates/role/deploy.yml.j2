@@ -1,4 +1,11 @@
 ---
+- name: Generate Terraform provider configuration
+  template:
+    src: terraform_provider.tf.j2
+    dest: "{{ terraform_path }}/provider.tf"
+    variables:
+      warhorse: "{{ warhorse }}"
+
 {% if warhorse.terraform.state_bucket_enabled is defined and warhorse.terraform.state_bucket_enabled is true %}
 - name: "{% raw %}{{ name }}{% endraw %} Terraform Remote State"
   community.general.terraform:
