@@ -24,6 +24,7 @@ terraform {
     {% if (warhorse.providers | default({})).get('aws') %}
     aws = {
       source = "hashicorp/aws"
+      version = "~> 4.0"
     }
     {% endif %}
 
@@ -67,6 +68,7 @@ terraform {
 {# Provider blocks for individual services #}
 {% if (warhorse.providers | default({})).get('digitalocean') %}
 provider "digitalocean" {
+  alias = "do"
   token = var.do_token
   
   spaces {
@@ -89,6 +91,7 @@ provider "cloudflare" {
 
 {% if (warhorse.providers | default({})).get('aws') %}
 provider "aws" {
+  alias = "aws"
   {% if aws_access_key is defined and aws_secret_key is defined %}
   access_key = "{{ aws_access_key }}"
   secret_key = "{{ aws_secret_key }}"
