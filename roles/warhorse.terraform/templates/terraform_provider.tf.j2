@@ -38,12 +38,14 @@ terraform {
     bucket = "{{ warhorse.terraform.state_bucket_name }}"
     key    = "{{ warhorse.terraform.state_bucket_key }}"
     region = "{{ warhorse.terraform.state_bucket_region }}"
+    # Use DO Spaces credentials for S3 backend
+    access_key = "{{ warhorse.terraform.bucket_access_key }}"
+    secret_key = "{{ warhorse.terraform.bucket_secret_key }}"
+    endpoint = "{{ warhorse.terraform.state_bucket_endpoint }}"
     skip_credentials_validation = true
-    skip_metadata_api_check     = true
-    use_path_style = true
-    endpoints = {
-      s3 = "{{ warhorse.terraform.state_bucket_endpoint }}"
-    }
+    skip_metadata_api_check = true
+    force_path_style = true
+    skip_requesting_account_id = true
   }
   {% endif %}
 
@@ -60,12 +62,11 @@ terraform {
 {# Provider blocks for individual services #}
 {% if (warhorse.providers | default({})).get('digitalocean') %}
 provider "digitalocean" {
-  alias = "do"
   token = var.do_token
   
-  spaces {
-    endpoint = "https://nyc3.digitaloceanspaces.com"
-  }
+  # Spaces credentials need to be configured separately from the main token
+  spaces_access_id  = "{{ warhorse.terraform.bucket_access_key }}"
+  spaces_secret_key = "{{ warhorse.terraform.bucket_secret_key }}"
 }
 {% endif %}
 
