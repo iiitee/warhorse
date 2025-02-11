@@ -21,13 +21,6 @@ terraform {
     }
     {% endif %}
 
-    {% if (warhorse.providers | default({})).get('aws') %}
-    aws = {
-      source = "hashicorp/aws"
-      version = "~> 4.0"
-    }
-    {% endif %}
-
     javascript = {
       source  = "apparentlymart/javascript"
       version = "0.0.1"
@@ -42,14 +35,14 @@ terraform {
   {# Backend configuration for state management using an S3 backend (compatible with DigitalOcean Spaces) #}
   {% if (warhorse.terraform | default({})).get('state_bucket_enabled') %}
   backend "s3" {
-    bucket = "{{ (warhorse.terraform | default({})).get('state_bucket', '') }}"
-    key    = "{{ (warhorse.terraform | default({})).get('state_key', '') }}"
-    region = "{{ (warhorse.terraform | default({})).get('state_region', 'nyc3') }}"
+    bucket = "{{ warhorse.terraform.state_bucket_name }}"
+    key    = "{{ warhorse.terraform.state_bucket_key }}"
+    region = "{{ warhorse.terraform.state_bucket_region }}"
     skip_credentials_validation = true
     skip_metadata_api_check     = true
     use_path_style = true
     endpoints = {
-      s3 = "{{ (warhorse.terraform | default({})).get('state_endpoint', '') }}"
+      s3 = "{{ warhorse.terraform.state_bucket_endpoint }}"
     }
   }
   {% endif %}
