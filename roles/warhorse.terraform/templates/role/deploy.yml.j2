@@ -13,7 +13,7 @@
       endpoints: '{"s3": "{{ warhorse.terraform.state_bucket_endpoint }}"}'
       skip_credentials_validation: "true"
       skip_metadata_api_check: "true"
-      force_path_style: "true"
+      use_path_style: "true"
     force_init: true
     variables:
 {% if warhorse.terraform.digitalocean_token is defined %}
