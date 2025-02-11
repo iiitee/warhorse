@@ -4,6 +4,7 @@ terraform {
     {% if (warhorse.providers | default({})).get('digitalocean') %}
     digitalocean = {
       source = "digitalocean/digitalocean"
+      version = "~> 2.0"
     }
     {% endif %}
 
@@ -45,6 +46,7 @@ terraform {
     region = "{{ (warhorse.terraform | default({})).get('state_region', 'nyc3') }}"
     skip_credentials_validation = true
     skip_metadata_api_check     = true
+    use_path_style = true
     {# Use the new endpoints block to specify the S3 endpoint instead of the deprecated 'endpoint' parameter #}
     endpoints {
       s3 = "{{ (warhorse.terraform | default({})).get('state_endpoint', '') }}"
@@ -93,6 +95,7 @@ provider "aws" {
   {% endif %}
   
   region = "us-east-1"
+  skip_requesting_account_id = true
   
   {% if (warhorse.terraform | default({})).get('aws_profile') is defined %}
   profile = "{{ (warhorse.terraform | default({})).get('aws_profile') }}"
