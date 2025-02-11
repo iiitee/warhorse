@@ -1,7 +1,7 @@
 ---
 - name: Generate Terraform provider configuration
   template:
-    src: terraform_provider.tf.j2
+    src: ../templates/terraform_provider.tf.j2
     dest: "{{ terraform_path }}/provider.tf"
     variables:
       warhorse: "{{ warhorse }}"
