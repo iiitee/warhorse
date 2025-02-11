@@ -63,7 +63,7 @@ terraform {
 {# Provider blocks for individual services #}
 {% if (warhorse.providers | default({})).get('digitalocean') %}
 provider "digitalocean" {
-  token = var.digitalocean_token
+  token = var.do_token
   
   # Spaces credentials need to be configured separately from the main token
   spaces_access_key_id  = "{{ warhorse.terraform.bucket_access_key }}"
