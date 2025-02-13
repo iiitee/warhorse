@@ -57,14 +57,9 @@ terraform {
   {% endif %}
 }
 
-{% if (warhorse.providers | default({})).get('digitalocean') %}
 provider "digitalocean" {
-  token = var.do_token
-
-  spaces_access_key_id  = "{{ warhorse.terraform.bucket_access_key }}"
-  spaces_secret_access_key = "{{ warhorse.terraform.bucket_secret_key }}"
+  token = "{{ warhorse.terraform.digitalocean_token }}"
 }
-{% endif %}
 
 {% if (warhorse.providers | default({})).get('linode') %}
 provider "linode" {
