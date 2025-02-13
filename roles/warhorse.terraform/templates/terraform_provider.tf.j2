@@ -98,8 +98,7 @@ provider "azurerm" {
     }
   }
 
-{% if warhorse.terraform | regex_search("(?i).+('cdn':.+'provider':\\s'azure')", multiline=True, ignorecase=True) or (warhorse.providers | default({})).get('azure') %}
 subscription_id = "{{ lookup('env', 'AZURE_SUBSCRIPTION_ID') }}"
-{% endif %}
+
 }
 {% endif %}
