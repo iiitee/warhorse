@@ -6,7 +6,6 @@ terraform {
       version = "~> 2.0"
     }
 
-
     {% if (warhorse.providers | default({})).get('cloudflare') %}
     cloudflare = {
       source  = "cloudflare/cloudflare"
@@ -31,14 +30,13 @@ terraform {
     }
   }
 
-  {# Backend configuration for state management using an S3 backend (compatible with DigitalOcean Spaces) #}
   {% if (warhorse.terraform | default({})).get('state_bucket_enabled') %}
   backend "s3" {
     bucket                = "{{ warhorse.terraform.state_bucket_name }}"
     key                   = "{{ warhorse.terraform.state_bucket_key }}"
-    region               = "us-east-1"  # Required for DO Spaces S3 API compatibility
-    access_key           = "{{ warhorse.terraform.bucket_access_key }}"
-    secret_key           = "{{ warhorse.terraform.bucket_secret_key }}"
+    region                = "us-east-1"
+    access_key            = "{{ warhorse.terraform.bucket_access_key }}"
+    secret_key            = "{{ warhorse.terraform.bucket_secret_key }}"
     endpoints = {
       s3 = "{{ warhorse.terraform.state_bucket_endpoint }}"
     }
@@ -59,12 +57,10 @@ terraform {
   {% endif %}
 }
 
-{# Provider blocks for individual services #}
 {% if (warhorse.providers | default({})).get('digitalocean') %}
 provider "digitalocean" {
   token = var.do_token
-  
-  # Spaces credentials need to be configured separately from the main token
+
   spaces_access_key_id  = "{{ warhorse.terraform.bucket_access_key }}"
   spaces_secret_access_key = "{{ warhorse.terraform.bucket_secret_key }}"
 }
@@ -89,24 +85,16 @@ provider "aws" {
   access_key = "{{ aws_access_key }}"
   secret_key = "{{ aws_secret_key }}"
   {% endif %}
-  
+
   region = "us-east-1"
   skip_requesting_account_id = true
-  
+
   {% if (warhorse.terraform | default({})).get('aws_profile') is defined %}
   profile = "{{ (warhorse.terraform | default({})).get('aws_profile') }}"
   {% endif %}
 }
 {% endif %}
 
-{% if warhorse.vm|regex_search("(?i).+('cdn':.+'provider':\s'azure')", multiline=True, ignorecase=True) %}
-provider "azurerm" {
-  features {
-    resource_group {
-      prevent_deletion_if_contains_resources = false
-    }
-  }
-  
 {% if warhorse.vm | regex_search("(?i).+('cdn':.+'provider':\\s'azure')", multiline=True, ignorecase=True) or (warhorse.providers | default({})).get('azure') %}
 provider "azurerm" {
   features {
