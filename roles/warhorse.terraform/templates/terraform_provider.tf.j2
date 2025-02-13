@@ -1,12 +1,10 @@
 terraform {
   required_version = ">= 1.0.0"
   required_providers {
-    {% if (warhorse.providers | default({})).get('digitalocean') %}
     digitalocean = {
       source = "digitalocean/digitalocean"
       version = "~> 2.0"
     }
-    {% endif %}
 
     {% if (warhorse.providers | default({})).get('cloudflare') %}
     cloudflare = {
