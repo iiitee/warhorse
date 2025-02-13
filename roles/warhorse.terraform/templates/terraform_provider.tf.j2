@@ -98,7 +98,7 @@ provider "azurerm" {
     }
   }
 
-subscription_id = {{ warhorse.terraform.subscription_id }} 
+subscription_id = "{{ warhorse.terraform.subscription_id }}"
 
 }
 {% endif %}
