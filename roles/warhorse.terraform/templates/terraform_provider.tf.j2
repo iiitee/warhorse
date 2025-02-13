@@ -98,7 +98,7 @@ provider "azurerm" {
     }
   }
 
-subscription_id = "{{ lookup('env', 'AZURE_SUBSCRIPTION_ID') }}"
+subscription_id = {{ warhorse.terraform.subscription_id }} 
 
 }
 {% endif %}
