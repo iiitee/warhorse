@@ -103,9 +103,7 @@ provider "azurerm" {
     }
   }
 
-  {% if warhorse.terraform is defined and warhorse.terraform.get('azure_subid') is defined %}
-  subscription_id = "{{ warhorse.terraform.azure_subid }}"
-  {% else %}
+  {% if warhorse.terraform is defined %}
   subscription_id = "{{ lookup('env', 'AZURE_SUBSCRIPTION_ID') }}"
   {% endif %}
 }
