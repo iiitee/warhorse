@@ -31,7 +31,16 @@
     - name: Start SSH agent if not running
       shell: |
         eval $(ssh-agent -s)
+        echo "SSH_AUTH_SOCK=$SSH_AUTH_SOCK" >> ~/.ssh-agent-env
+        echo "SSH_AGENT_PID=$SSH_AGENT_PID" >> ~/.ssh-agent-env
       register: ssh_agent
+      changed_when: false
+
+    - name: Source SSH agent environment variables
+      shell: |
+        if [ -f ~/.ssh-agent-env ]; then
+          . ~/.ssh-agent-env
+        fi
       changed_when: false
 
     - name: Add SSH key to agent
