@@ -23,21 +23,23 @@
         path: "{{ ansible_ssh_private_key_file }}"
       register: ssh_key_stat
 
-    - name: Debug SSH key file path
-      debug:
-        msg: "SSH key file: {{ ansible_ssh_private_key_file }}"
-
     - name: Fail if SSH key file does not exist
       fail:
         msg: "SSH key file does not exist: {{ ansible_ssh_private_key_file }}"
       when: not ssh_key_stat.stat.exists
 
-    - name: Unlock SSH key "{{ ansible_ssh_private_key_file }}"
+    - name: Start SSH agent if not running
+      shell: |
+        eval $(ssh-agent -s)
+      register: ssh_agent
+      changed_when: false
+
+    - name: Add SSH key to agent
       expect:
         command: ssh-add "{{ ansible_ssh_private_key_file }}"
         responses:
           passphrase: "{{ ssh_passphrase }}"
-        timeout: 10
+        timeout: 60
       delegate_to: 127.0.0.1
       become: no
       changed_when: no
