@@ -7,7 +7,7 @@
   tasks:
   - name: Start
     set_fact:
-      start_time: "{% raw %}{{ ansible_date_time.iso8601[:19] }}{% endraw %}"
+      start_time: "{{ ansible_date_time.iso8601[:19] }}"
   vars: 
     deploy: true
   roles:
@@ -17,12 +17,15 @@
   hosts: localhost
   gather_facts: false
   connection: local
+  vars:
+    ansible_ssh_private_key_file: "{{ lookup('env', 'SSH_PRIVATE_KEY_FILE') }}"  # Use environment variable for SSH private key file
+    ssh_passphrase: "{{ lookup('env', 'SSH_PASSPHRASE') }}"  # Use environment variable for SSH passphrase
   tasks:
-  - name: Unlock SSH key "{% raw %}{{ ansible_ssh_private_key_file }}{% endraw %}"
+  - name: Unlock SSH key "{{ ansible_ssh_private_key_file }}"
     expect:
-      command: ssh-add "{% raw %}{{ ansible_ssh_private_key_file }}{% endraw %}"
+      command: ssh-add "{{ ansible_ssh_private_key_file }}"
       responses:
-        passphrase: "{% raw %}{{ ssh_passphrase }}{% endraw %}"
+        passphrase: "{{ ssh_passphrase }}"
     delegate_to: 127.0.0.1
     become: no
     changed_when: no
@@ -162,6 +165,6 @@
     setup: filter='ansible_date_time'
   - name: Get runtime
     set_fact:
-      runtime: "{% raw %}{{ ((ansible_date_time.iso8601[:19] | to_datetime('%Y-%m-%dT%H:%M:%S')) - (start_time | to_datetime('%Y-%m-%dT%H:%M:%S'))) }}{% endraw %}"
+      runtime: "{{ ((ansible_date_time.iso8601[:19] | to_datetime('%Y-%m-%dT%H:%M:%S')) - (start_time | to_datetime('%Y-%m-%dT%H:%M:%S'))) }}"
   - debug:
-      msg: "Playbook Runtime {% raw %}{{ runtime }}{% endraw %}"
+      msg: "Playbook Runtime {{ runtime }}"
