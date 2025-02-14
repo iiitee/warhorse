@@ -30,16 +30,39 @@
 
     - name: Start SSH agent if not running
       shell: |
-        eval $(ssh-agent -s)
+        if [ -z "$SSH_AUTH_SOCK" ]; then
+          eval $(ssh-agent -s)
+        fi
         echo "SSH_AUTH_SOCK=$SSH_AUTH_SOCK"
         echo "SSH_AGENT_PID=$SSH_AGENT_PID"
       register: ssh_agent
       changed_when: false
 
+    - name: Debug SSH agent output
+      debug:
+        var: ssh_agent.stdout_lines
+
     - name: Set SSH agent environment variables fact
       set_fact:
-        ssh_auth_sock: "{{ ssh_agent.stdout_lines | select('search', '^SSH_AUTH_SOCK=') | first | regex_replace('^SSH_AUTH_SOCK=', '') }}"
-        ssh_agent_pid: "{{ ssh_agent.stdout_lines | select('search', '^SSH_AGENT_PID=') | first | regex_replace('^SSH_AGENT_PID=', '') }}"
+        ssh_auth_sock: >-
+          {{
+            (ssh_agent.stdout_lines |
+            select('search', '^SSH_AUTH_SOCK=') |
+            list | first | regex_replace('^SSH_AUTH_SOCK=', ''))
+            | default(lookup('env','SSH_AUTH_SOCK'))
+          }}
+        ssh_agent_pid: >-
+          {{
+            (ssh_agent.stdout_lines |
+            select('search', '^SSH_AGENT_PID=') |
+            list | first | regex_replace('^SSH_AGENT_PID=', ''))
+            | default(lookup('env','SSH_AGENT_PID'))
+          }}
+      when: ssh_agent is defined
+
+    - name: Debug SSH agent facts
+      debug:
+        msg: "SSH_AUTH_SOCK={{ ssh_auth_sock }}, SSH_AGENT_PID={{ ssh_agent_pid }}"
 
     - name: Add SSH key to agent
       expect:
@@ -68,6 +91,7 @@
       wait_for_connection:
         delay: 10
         timeout: 300
+
 
 
 - name: Apt Ready
