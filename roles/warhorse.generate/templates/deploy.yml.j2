@@ -18,15 +18,34 @@
   gather_facts: false
   connection: local
   tasks:
+    - name: Verify SSH key file exists
+      stat:
+        path: "{{ ansible_ssh_private_key_file }}"
+      register: ssh_key_stat
+
+    - name: Debug SSH key file path
+      debug:
+        msg: "SSH key file: {{ ansible_ssh_private_key_file }}"
+
+    - name: Fail if SSH key file does not exist
+      fail:
+        msg: "SSH key file does not exist: {{ ansible_ssh_private_key_file }}"
+      when: not ssh_key_stat.stat.exists
+
     - name: Unlock SSH key "{{ ansible_ssh_private_key_file }}"
       expect:
         command: ssh-add "{{ ansible_ssh_private_key_file }}"
         responses:
           passphrase: "{{ ssh_passphrase }}"
+        timeout: 10
       delegate_to: 127.0.0.1
       become: no
       changed_when: no
       no_log: false
+
+    - name: Debug SSH key unlocked
+      debug:
+        msg: "SSH key {{ ansible_ssh_private_key_file }} unlocked successfully"
 
     - name: Gathering facts
       setup:
@@ -37,7 +56,6 @@
       wait_for_connection:
         delay: 10
         timeout: 300
-
 
 - name: Apt Ready
   gather_facts: yes
