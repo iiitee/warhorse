@@ -16,32 +16,35 @@
 - name: Refresh Inventory & unlock SSH Key
   hosts: localhost
   gather_facts: false
-  connection: local
   tasks:
-    - name: Verify SSH key file exists
-      stat:
-        path: "{{ ansible_ssh_private_key_file }}"
-      register: ssh_key_stat
+    - name: Start SSH agent
+      command: ssh-agent
+      register: ssh_agent
+      changed_when: false
+      
+    - name: Set SSH agent environment variables
+      shell: |
+        eval $(ssh-agent) && \
+        echo "SSH_AUTH_SOCK=$SSH_AUTH_SOCK" && \
+        echo "SSH_AGENT_PID=$SSH_AGENT_PID"
+      register: agent_env
+      changed_when: false
 
-    - name: Debug SSH key file path
-      debug:
-        msg: "SSH key file: {{ ansible_ssh_private_key_file }}"
+    - name: Set environment variables
+      shell: |
+        export SSH_AUTH_SOCK=$(echo "{{ agent_env.stdout_lines[0] }}" | cut -d'=' -f2) && \
+        export SSH_AGENT_PID=$(echo "{{ agent_env.stdout_lines[1] }}" | cut -d'=' -f2)
 
-    - name: Fail if SSH key file does not exist
-      fail:
-        msg: "SSH key file does not exist: {{ ansible_ssh_private_key_file }}"
-      when: not ssh_key_stat.stat.exists
-
-    - name: Unlock SSH key "{{ ansible_ssh_private_key_file }}"
+    - name: Add SSH key
       expect:
-        command: ssh-add "{{ ansible_ssh_private_key_file }}"
+        command: "ssh-add {{ ansible_ssh_private_key_file }}"
         responses:
-          passphrase: "{{ ssh_passphrase }}"
+          "Enter passphrase": "{{ ssh_passphrase }}"
         timeout: 10
-      delegate_to: 127.0.0.1
-      become: no
-      changed_when: no
-      no_log: false
+      environment:
+        SSH_AUTH_SOCK: "{{ agent_env.stdout_lines[0].split('=')[1] }}"
+        SSH_AGENT_PID: "{{ agent_env.stdout_lines[1].split('=')[1] }}"
+      no_log: true
 
     - name: Debug SSH key unlocked
       debug:
