@@ -59,6 +59,7 @@ terraform {
 
 provider "digitalocean" {
   token = "{{ warhorse.terraform.digitalocean_token }}"
+  skip_duplicate_instances = true
 }
 
 {% if (warhorse.providers | default({})).get('linode') %}
@@ -99,6 +100,7 @@ provider "azurerm" {
   }
 
 subscription_id = "{{ warhorse.terraform.subscription_id }}"
+skip_duplicate_instances = true
 
 }
 {% endif %}
