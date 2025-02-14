@@ -7,7 +7,7 @@
   tasks:
   - name: Start
     set_fact:
-      start_time: "{{ ansible_date_time.iso8601[:19] }}"
+      start_time: "{% raw %}{{ ansible_date_time.iso8601[:19] }}{% endraw %}"
   vars: 
     deploy: true
   roles:
@@ -18,11 +18,11 @@
   gather_facts: false
   connection: local
   tasks:
-  - name: Unlock SSH key "{{ ansible_ssh_private_key_file }}"
+  - name: Unlock SSH key "{% raw %}{{ ansible_ssh_private_key_file }}{% endraw %}"
     expect:
-      command: ssh-add "{{ ansible_ssh_private_key_file }}"
+      command: ssh-add "{% raw %}{{ ansible_ssh_private_key_file }}{% endraw %}"
       responses:
-        passphrase: "{{ ssh_passphrase }}"
+        passphrase: "{% raw %}{{ ssh_passphrase }}{% endraw %}"
     delegate_to: 127.0.0.1
     become: no
     changed_when: no
@@ -162,6 +162,6 @@
     setup: filter='ansible_date_time'
   - name: Get runtime
     set_fact:
-      runtime: "{{ ((ansible_date_time.iso8601[:19] | to_datetime('%Y-%m-%dT%H:%M:%S')) - (start_time | to_datetime('%Y-%m-%dT%H:%M:%S'))) }}"
+      runtime: "{% raw %}{{ ((ansible_date_time.iso8601[:19] | to_datetime('%Y-%m-%dT%H:%M:%S')) - (start_time | to_datetime('%Y-%m-%dT%H:%M:%S'))) }}{% endraw %}"
   - debug:
-      msg: "Playbook Runtime {{ runtime }}"
+      msg: "Playbook Runtime {% raw %}{{ runtime }}{% endraw %}"
