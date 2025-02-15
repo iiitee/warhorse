@@ -95,7 +95,7 @@
     - { role: warhorse.nginx_docker }
 {% endif %}
 {% if vm.cobaltstrike is defined %}
-    - { role: warhorse.cobaltstrike_docker }
+    - { role: almart.cobaltstrike_docker }
 {% endif %}
 {% if vm.gophish is defined %}
     - { role: warhorse.gophish_docker }
