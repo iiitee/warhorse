@@ -12,7 +12,7 @@ roles:
   - name: t94j0.mythic
 
   - name: almart.cobaltstrike_docker
-  - name: warhorse.neo4j_docker
+  - name: almart.neo4j_docker
   - name: warhorse.traefik_docker
   - name: warhorse.nighthawk_docker
   - name: warhorse.gophish_docker
