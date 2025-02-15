@@ -30,7 +30,7 @@
   hosts: warhorse
   connection: ssh
   become: true
-  no_log: true
+  no_log: false
   vars: 
     deploy: true
   tasks:
@@ -48,7 +48,7 @@
   hosts: warhorse
   connection: ssh
   become: true
-  no_log: true
+  no_log: false
   vars: 
     deploy: true
   roles:
@@ -78,7 +78,7 @@
   hosts: {{ vm.name }}
   connection: ssh
   become: true
-  no_log: true
+  no_log: false
   vars: 
     deploy: true
   roles:
