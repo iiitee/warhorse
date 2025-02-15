@@ -92,7 +92,7 @@
     - { role: warhorse.traefik_docker }
 {% endif %}
 {% if vm.http_proxy is defined and vm.http_proxy == "nginx" %}
-    - { role: warhorse.nginx_docker }
+    - { role: almart.nginx_docker }
 {% endif %}
 {% if vm.cobaltstrike is defined %}
     - { role: almart.cobaltstrike_docker }
