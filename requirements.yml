@@ -17,7 +17,7 @@ roles:
   - name: warhorse.nighthawk_docker
   - name: warhorse.gophish_docker
   - name: warhorse.evilginx2_docker
-  - name: warhorse.nginx_docker
+  - name: almart.nginx_docker
   - name: warhorse.parrotos_docker
   - name: warhorse.swag_docker
 
