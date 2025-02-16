@@ -15,7 +15,7 @@ roles:
   - name: almart.neo4j_docker
   - name: warhorse.traefik_docker
   - name: warhorse.nighthawk_docker
-  - name: warhorse.gophish_docker
+  - name: almart.gophish_docker
   - name: almart.evilginx2_docker
   - name: almart.nginx_docker
   - name: warhorse.parrotos_docker
