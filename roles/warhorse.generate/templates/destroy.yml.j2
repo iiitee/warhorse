@@ -6,7 +6,7 @@
   hosts: {{ vm.name }}
   connection: ssh
   become: true
-  no_log: true
+  no_log: false
   vars: 
     deploy: false
   roles:
@@ -21,7 +21,7 @@
   hosts: {{ vm.name }}
   connection: ssh
   become: true
-  no_log: true
+  no_log: false
   vars: 
     deploy: false
   roles:
@@ -33,7 +33,7 @@
   hosts: localhost
   gather_facts: false
   connection: local
-  no_log: true
+  no_log: false
   vars: 
     deploy: false
   roles:
@@ -43,7 +43,7 @@
   hosts: localhost
   gather_facts: false
   connection: local
-  no_log: true
+  no_log: false
   vars: 
     deploy: false
   tasks:
@@ -59,7 +59,7 @@
   hosts: localhost
   gather_facts: false
   connection: local
-  no_log: true
+  no_log: false
   vars: 
     deploy: false
   tasks:
@@ -76,7 +76,7 @@
   gather_facts: yes
   hosts: localhost
   connection: ssh
-  no_log: true
+  no_log: false
   vars: 
     deploy: false
   roles:
