@@ -14888,7 +14888,6 @@ http {
         proxy_set_header X-Forwarded-For $remote_addr;
         proxy_pass http://gophish:3333;
         allow {{ vm.gophish.white_list_ip }};
-        allow {{ vm.gophish.white_list_tailscale_public_ip }};
         deny all;
       }
     }
